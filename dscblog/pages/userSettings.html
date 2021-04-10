@@ -1,0 +1,26 @@
+{% extends "base.html" %} {% block title %}User settings | DSC IEM Blogs{% endblock %} {% block content %}
+<link rel="stylesheet" type="text/css" href="/static/styles/forms2.css" />
+
+<div class="container">
+    <br />
+    <div class="ink-primary size-xxl base-light">
+        Paramètres utilisateur
+    </div>
+    <hr />
+    <form method="post">
+        {{ form.as_p }}
+        <button type="submit">Sauvegarder</button>
+    </form>
+    <br />
+</div>
+<script>
+    $(document).ready(function() {
+        $("input[type=checkbox]").parent().css({
+            flexDirection: 'row',
+            width: '17rem',
+            maxWidth: '85vw',
+            justifyContent: 'space-between'
+        })
+    })
+</script>
+{% endblock %}

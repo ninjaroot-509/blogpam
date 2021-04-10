@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% load numbers %}
+{% block title %}
+{{blog.title}} | DSC IEM Blogs
+{% endblock %}
+{% block desc %}
+"{{blog.content|striptags|truncatewords:50}}"
+{% endblock %}
+{% block tags %}
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": "{{blog.title}}",
+        "author" : {
+            "@type" : "Person",
+            "name" : "{{blog.author.name}}"
+          },
+        "image": [
+          "{{blog.img_url}}"
+         ],
+        "datePublished": "{{blog.published_on|date:"c"}}",
+        "dateModified": "{{blog.modified_on|date:"c"}}"
+      }
+</script>
+<meta property="og:title" content="{{blog.title}} | DSCIEM Blog" >
+<meta property="og:image" content="{{blog.img_url}}" >
+<meta property="og:url" content="{{BASE_URL}}{{blog.blog_url}}" />
+<meta property="og:type" content="website" />
+<meta property="og:og:description" content="{{blog.content|striptags|truncatewords:50}}" />
+{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/styles/blog.css" />
+<link rel="stylesheet" type="text/css" href="/static/styles/md.css" />
+<link rel="stylesheet" type="text/css" href="/static/styles/monokai.css" />
+<link rel="stylesheet" type="text/css" href="/static/styles/blogsGrid.css" />
+<link rel="stylesheet" href="https://use.typekit.net/apw7exh.css">
+<div id="b_head">
+    <div id="bhd_like">
+        {% if is_owner %}
+        <a href="/blog/{{blog.blog_id}}/settings" class="share_link settings center">
+            <img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/settings.png" />
+        </a>
+        {% endif %}
+    </div>
+    <div class="center" id="bhd_icon">
+    <a href="/"><img class="icon" style="font-size: 2.35rem;margin: 0px;" src="/static/icons/icon.png" /></a>    
+    </div>
+    <div id="bhd_share" class="center">
+        {% if blog.is_published %}
+        <a 
+        href="https://www.facebook.com/sharer.php?caption={{blog.title}}&u={{BASE_URL}}{{blog.blog_url}}&picture={{blog.img_url}}" 
+        class="share_link fb center">
+        <img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/fb_share.png" />
+        </a>
+        <a class="share_link tw center" href="https://twitter.com/intent/tweet?text={{blog.title}}&url={{BASE_URL}}{{blog.blog_url}}">
+            <img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/twitter_share.png" />
+        </a>
+        <a onclick="shareLink()" class="share_link link center"><img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/link_share.png" /></a>
+        <a onclick="exportLink()" class="share_link export center"><img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/export_share.png" /></a>
+        {% else %}
+        <a href="/blog/{{blog.blog_id}}/edit" class="share_link edit center">
+            <img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/edit.png" />
+        </a>
+        <a href="/blog/{{blog.blog_id}}/settings" class="share_link settings center">
+            <img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/settings.png" />
+        </a>
+        {% endif %}
+    </div>
+</div>
+<div class="b_img center-col" style="background-image: url({{blog.img_url}})" >
+    <div id="b_img_screen"></div>
+    <div class="blog-title size-xl">
+        {{blog.title}}
+    </div>
+    <div id="p_dt" class="size-xs base-semilight ink-white"><i>
+        {% if blog.is_published %}
+        Publié {{blog.published_on|date:"D d M Y"}}
+        {% else %}
+        Private
+    {% endif %}
+    </i></div>
+</div>
+<div class="container blog_opts">
+<div class="hstack space-between bi_opts">
+    <div class="hstack">
+    {% if not blog.is_published %}
+        <img class="bi_locked" alt="locked" src="/static/icons/locked.png" />
+    {% endif %}
+    <div class="bi_opt center" style="font-size: 0.8rem;">
+        <img class="icon" style="font-size: 1rem; margin: 0px; margin-right: 0.5rem;" alt="views count" src="/static/icons/eye.png" />
+        {{blog.views_count|compact}}
+    </div>
+    </div>
+    {% if is_owner %}
+    <div style="display:flex">
+        <a href="/blog/{{blog.blog_id}}/edit" class="bi_opt center">Éditer</a>
+        <a href="/blog/{{blog.blog_id}}/settings" class="bi_opt center">Paramètres</a>
+    </div>
+    {% endif %} 
+</div>
+</div>
+<div class="container author-info ink-grey">
+        <div class="size-xs base-light">AUTHOR</div>
+        <div onclick="openLink('/@{{blog.author.username}}')" 
+        class="size-s ink-orange base-regular clickable">
+        {% include "blocks/name.html" with user=blog.author %}
+        </div>
+</div>
+<div class="markdown">
+    {% autoescape off %}
+    {{html}}
+    {% endautoescape %}
+    <br/>
+    {% if blog.modified_on != blog.published_on %}
+    <div class="size-xs base-light ink-grey">Dernière mise à jour le: {{blog.modified_on}}</div>
+    {% endif %}
+</div>
+<div id="react_box" class="center">
+    <div class="react" id="like">👍<div class="react_count" id="like_count">{{blog.reaction_counts.LIK}}</div></div>
+    <div class="react" id="love" style="color: red;">❤<div class="react_count" id="love_count">{{blog.reaction_counts.LOV}}</div></div>
+    <div class="react" id="lit">🔥<div class="react_count" id="lit_count">{{blog.reaction_counts.LIT}}</div></div>
+    <div class="react" id="cool">🆒<div class="react_count" id="cool_count">{{blog.reaction_counts.COL}}</div></div>
+    <div class="react" id="clap">👏<div class="react_count" id="clap_count">{{blog.reaction_counts.CLP}}</div></div>
+</div>
+{% if is_owner %}
+    <div class="center">
+        <a class="ink-green size-xs base-regular" href="/blog/{{blog.blog_id}}/reactions">Voir les réactions</a>
+    </div>
+    <br/>
+    {% endif %}
+<br/>
+<div class="center-col">
+    <a href="/blog/{{blog.blog_id}}/comments" id="comments_button" class="size-s base-regular ink-blue" >
+        {{blog.comments_count|compact}} Comments
+    </a>
+</div>
+<br />
+<div class="container ab-box">
+ <hr class="wavy-line">
+ <div class="ink-grey base-regular size-s" style="padding: 0.5rem; padding-top: 0;">AUTHOR</div>
+ <div class="ab-author">
+        {% if blog.author.avatar_url %}
+        <a href="/@{{ blog.author.username }}">
+            <img class="icon author_avatar size-s" src="{{ blog.author.avatar_url }}" />
+        </a>
+        {% endif %}
+    <span onclick="openLink('/@{{blog.author.username}}')" 
+    class="size-l ink-secondary base-semibold clickable">
+    {% include "blocks/name.html" with user=blog.author %}
+</span>
+ </div>
+ <div class="ink-grey base-regular size-xs" style="padding-left: 0.6rem;">
+    {{author_bio}}
+ </div>
+</div>
+<br />
+<br/>
+<div class="center topics">
+    {% for topic in blog.topics %}
+    <a href="/topic/{{topic}}" class="topic ink-secondary">#{{topic}}</a>
+    {% endfor %}
+</div>
+<br/>
+{% if blog.is_published %}
+    <div class="center share_box">
+        <a 
+        href="https://www.facebook.com/sharer.php?caption={{blog.title}}&u={{BASE_URL}}{{blog.blog_url}}&picture={{blog.img_url}}" 
+        class="share_link fb center">
+        <img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/fb_share.png" />
+        </a>
+        <a class="share_link tw center" href="https://twitter.com/intent/tweet?text={{blog.title}}&url={{BASE_URL}}{{blog.blog_url}}">
+            <img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/twitter_share.png" />
+        </a>
+        <a onclick="shareLink()" class="share_link link center"><img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/link_share.png" /></a>
+        <a onclick="exportLink()" class="share_link export center"><img class="icon" style="font-size: 1rem;margin: 0px;" src="/static/icons/export_share.png" /></a>
+    </div>
+<br/>
+{% endif %}
+<div class="container" id="more">
+        <div style="padding-left: 1.5rem;" class="size-m base-semilight ink-grey">Continue de lire</div>
+    <hr/>
+    {% include "blocks/blogsGrid.html" with items=more_blogs is_owner=False  %}
+</div>
+<br />
+<script>
+     var isFloating = false;
+    $(window).scroll(() => {
+        if (window.pageYOffset > 500) {
+            if (!isFloating) {
+                $("#b_head").addClass('float')
+                isFloating = true
+            }
+        } else {
+            if (isFloating) {
+                $("#b_head").removeClass('float')
+                isFloating = false
+            }
+        }
+    });
+    function shareLink(){
+        const clipText = window.location.href
+        var promise = navigator.clipboard.writeText(clipText).then(() => {
+                alert("Link copied to clipboard")
+            }, () => {
+                console.error("Failed to copy to clipboard")
+            });
+    }
+    function exportLink(){
+        const url = window.location.href
+        const shareData = {
+            title: '{{blog.title}}',
+            text: "{{blog.title}}",
+            url,
+        }
+        const clipText = url
+        if (navigator.share) {
+            // Web Share API is supported
+            window.navigator.share(shareData).then(() => {
+                console.log("Link shared")
+            })
+                .catch((e) => {
+                    console.error(e)
+                });
+        } else {
+            var promise = navigator.clipboard.writeText(clipText).then(() => {
+                alert("Link copied to clipboard")
+            }, () => {
+                console.error("Failed to copy to clipboard")
+            });
+        }
+    }
+    const REACTS={
+    'LIK':'like',
+    'LOV':'love',
+    'LIT' :'lit',
+    'COL' : 'cool',
+    'CLP' : 'clap',
+    'None': null
+    }
+    var counts={
+        like:{{blog.reaction_counts.LIK}},
+        love:{{blog.reaction_counts.LOV}},
+        lit:{{blog.reaction_counts.LIT}},
+        cool:{{blog.reaction_counts.COL}},
+        clap:{{blog.reaction_counts.CLP}}
+    }
+    const view_key="{{view_key}}"
+    var currentReact=REACTS['{{blog.user_reaction}}']
+    var blog_id={{blog.blog_id}}
+    var is_loading=false;
+    var api = new window.Api();
+    function renderReacts(){
+        Object.keys(counts).forEach(react => {
+            $("#"+react).removeClass('active');
+            $("#"+react+'_count').html(counts[react]);
+            if(currentReact==react){
+                $("#"+react).addClass('active');
+            }
+        });
+    }
+    renderReacts();
+    function react(code){
+        if(!is_loading){
+        is_loading=true;
+        api.post('blog/react', {
+            reaction:code,
+            blog_id
+        }, (scode, res) => {
+            is_loading = false
+            if (scode == 201) {
+                if(currentReact!=REACTS[code]){
+                    counts[currentReact]--;
+                    counts[REACTS[code]]++;
+                }
+                currentReact=REACTS[code]
+                renderReacts();
+            } else if (scode == 400) {
+                alert(res.msg);
+            } else if (scode == 401) {
+                window.location.href = "/accounts/login?next="+window.location.pathname
+            }
+        })
+    }
+    }
+    $("#like").on('click',function(){react('LIK')})
+    $("#love").on('click',function(){react('LOV')})
+    $("#lit").on('click',function(){react('LIT')})
+    $("#cool").on('click',function(){react('COL')})
+    $("#clap").on('click',function(){react('CLP')})
+    var pingbacks=0
+    function ping(){
+        api.post('blog/pingback', {view_key}, 
+        (scode, res) => {
+            is_loading = false
+            if (scode == 201) {
+                pingbacks=res.pingbacks
+                console.log('pingback',pingbacks)
+            } else if (scode == 400) {
+                console.error(res.msg);
+            } else if (scode == 401) {
+                window.location.href = "/accounts/login?next="+window.location.pathname
+            }
+        }) 
+    }
+    if(view_key!='None' && view_key!=null){
+        window.setInterval(()=>{
+        if(pingbacks<=30){
+            ping()
+        }
+    },22000)
+    }
+    
+</script>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+{% endblock %}

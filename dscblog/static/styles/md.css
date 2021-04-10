@@ -1,0 +1,397 @@
+.markdown {
+  color: #331e3e;
+}
+
+[data-theme="dark"] .markdown {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+[data-theme="dark"] hr {
+  border-color: rgb(63, 63, 63);
+}
+
+.markdown {
+  /* TEXT PARENT */
+  width: 50em;
+  max-width: 100%;
+  padding: 1.2rem;
+  margin: 0 auto;
+  font-family: ff-tisa-web-pro, "Basic Sans", basic-sans, georgia, serif;
+  font-size: 18px;
+  font-weight: 300;
+  text-align: center;
+  overflow: hidden;
+}
+
+.markdown * {
+  text-align: left;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Basic Sans", basic-sans, "Helvetica Neue", helvetica, arial,
+    sans-serif;
+  margin-bottom: 0;
+}
+
+h1 {
+  font-size: 3.5rem;
+  margin-bottom: .3em;
+}
+
+@media screen and (max-width: 960px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  h1 {
+    margin-block-start: 0.5em;
+  }
+}
+
+h2 {
+  font-size: 2rem;
+  margin-bottom: .2em;
+}
+
+@media screen and (max-width: 960px) {
+  h2 {
+    font-size: 1.8rem;
+  }
+}
+
+h3 {
+  font-size: 1.45rem;
+}
+
+h4 {
+  margin-bottom: 1rem;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  overflow-x: hidden;
+}
+
+.markdown a {
+  background-size: 0.06em 0.06em;
+  background-repeat: repeat-x;
+  background-position-y: 93%;
+  background-position-x: 0;
+  color: rgba(0, 132, 255, 0.747);
+  text-decoration: none;
+  transition: 0.15s;
+}
+
+.markdown a:active {
+  color: rgba(132, 0, 255, 0.747);
+  text-decoration: none;
+}
+
+.markdown a:hover {
+  color: rgb(0, 195, 255);
+}
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+em,
+i {
+  font-style: italic;
+}
+
+del,
+s,
+strike {
+  text-decoration: none;
+  background-image: linear-gradient(#000, #000);
+  background-size: 0.06em 0.06em;
+  background-repeat: repeat-x;
+  background-position-y: 65%;
+  background-position-x: 0;
+}
+
+code,
+pre,
+samp,
+var {
+  font-size: 90%;
+  font-family: "Roboto Mono", monospace;
+  font-weight: 300;
+  line-height: 1.4em;
+}
+
+pre {
+  display: block;
+  padding: 1rem 2rem;
+  overflow-x: auto;
+  border-radius: 0.6rem;
+  background-color: #272822;
+  color: #eee;
+}
+
+pre::-webkit-scrollbar {
+  height: 0.4rem;
+  border-radius: 2rem;
+  background-color: rgba(141, 141, 141, 0.137);
+}
+pre::-webkit-scrollbar-thumb {
+  background-color: rgba(141, 141, 141, 0.74);
+}
+@media (max-width: 700px) {
+  pre::-webkit-scrollbar {
+    display: none;
+  }
+  pre::-webkit-scrollbar-thumb {
+    display: none;
+  }
+}
+p code {
+  padding: 0 0.2em 0.1em;
+  background-color: rgb(212, 212, 212);
+}
+
+[data-theme="dark"] p code {
+  background-color: rgb(39, 39, 39);
+}
+
+p var {
+  padding: 0 0.2em 0.1em;
+  background-color: #eee;
+  font-weight: bolder;
+  font-style: normal;
+}
+
+p samp {
+  padding: 0 0.2em 0.1em;
+  margin: 0 0.1em;
+  background-color: #666;
+  color: #eee;
+}
+
+kbd {
+  position: relative;
+  padding: 0.2em 0.2em 0.1em 0.2em;
+  margin: 0 0.1em;
+  bottom: 0.125em;
+  font-family: "Fira Sans", "Verdana", "Geneva", sans-serif;
+  font-size: 0.8em;
+  background-color: #eee;
+  border-radius: 0.2em;
+  border-bottom: 0.05em solid #aaa;
+}
+
+blockquote {
+  margin: 1rem 1rem;
+  padding: 1rem 2rem;
+  color: rgb(119, 119, 119);
+  font-size: 1.2rem;
+  font-style: italic;
+  font-weight: 400;
+  overflow: hidden;
+}
+[data-theme="dark"] blockquote {
+  color: rgb(163, 163, 163);
+}
+blockquote::before {
+  content: "\201C";
+  display: block;
+  position: relative;
+  height: 0;
+  left: -1.3rem;
+  top: -1.7rem;
+  font-size: 2.5em;
+  color: #888;
+}
+
+blockquote::after {
+  content: "\201D";
+  display: inline-block;
+  position: relative;
+  height: 0;
+  top: 0.4rem;
+  left: -1.3rem;
+  font-size: 2.5em;
+  line-height: 0;
+  color: #888;
+}
+
+abbr[title] {
+  text-decoration: none;
+  background-image: linear-gradient(90deg, gray 50%, transparent 50%);
+  background-size: 0.1em 0.06em;
+  background-repeat: repeat-x;
+  background-position-y: 100%;
+  background-position-x: 0;
+  font-feature-settings: "smcp";
+}
+
+ul {
+  padding-left: 2em;
+}
+
+ul > li {
+  padding-left: 0;
+}
+
+ul > li::before {
+  display: block;
+  position: relative;
+  height: 0;
+  width: 2em;
+  margin-left: -2.3em;
+  font-weight: bolder;
+  color: #888;
+  text-align: right;
+}
+
+ul ul > li::before {
+  content: "›";
+  display: block;
+  position: relative;
+  height: 0;
+  width: 2em;
+  margin-left: -2.5em;
+  font-weight: bolder;
+  color: #888;
+  text-align: right;
+}
+
+ol {
+  list-style: none;
+}
+
+ol > li {
+  padding-left: 0;
+  counter-increment: ol-count;
+}
+
+ol > li:first-child {
+  counter-reset: ol-count;
+}
+
+ol > li::before {
+  content: counter(ol-count) ".";
+  display: block;
+  position: relative;
+  height: 0;
+  width: 2em;
+  margin-left: -2.5em;
+  font-weight: bolder;
+  color: #888;
+  text-align: right;
+}
+
+ol ol,
+ol ul,
+ul ol,
+ul ul {
+  margin: 0.5em 0;
+}
+
+.markdown img {
+  display: block;
+  margin: 1rem auto;
+  max-width: 100%;
+  border-radius: 0.8rem;
+  height: auto;
+}
+
+.markdown figure {
+  display: inline-table;
+  margin: 0rem -2rem 1rem -2rem;
+  padding: 2rem 2rem;
+  background-color: #eee;
+}
+
+.markdown figure img {
+  display: inline-block;
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.markdown figure img + img {
+  margin-left: 1rem;
+}
+
+.markdown figure figcaption {
+  max-width: 100%;
+  margin: 1rem auto -1rem auto;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+table {
+  margin: 0 -1rem 1rem -1rem;
+  width: calc(100% + 2rem);
+  overflow: hidden;
+  border-collapse: collapse;
+}
+
+table caption {
+  padding-top: 0.5rem;
+  border-top: 1px solid #eee;
+  caption-side: bottom;
+  text-align: center;
+  font-style: italic;
+  color: #666;
+}
+
+tr {
+  transition: 0.15s;
+}
+
+thead tr {
+  border-bottom: 2px solid #888;
+}
+
+tfoot tr {
+  border-bottom: none;
+  border-top: 1px solid #eee;
+  font-weight: bolder;
+}
+
+tbody tr:hover,
+tfoot tr:hover {
+  background-color: #eee;
+}
+
+[data-theme="dark"] tbody tr:hover,
+tfoot tr:hover {
+  background-color: rgb(44, 44, 44);
+}
+
+td,
+th {
+  position: relative;
+  padding: 0.3rem 1rem;
+}
+
+th {
+  font-weight: bolder;
+}
+
+tbody tr:first-of-type td,
+tbody tr:first-of-type th {
+  padding-top: 0.5rem;
+}
+
+/*hr::after {
+    content: "* *";
+    display: block;
+    position: relative;
+    bottom: 1.5em;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 2rem;
+}*/

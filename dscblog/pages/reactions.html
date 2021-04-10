@@ -1,0 +1,18 @@
+{% extends 'base.html' %} {% block title %}Reactions - {{ blog.title }} | DSC IEM Blogs{% endblock %} {% block content %}
+<div class="container">
+    {% if users|length %}
+    <br />
+    <div class="ink-primary size-l base-regular">
+        Reactions
+    </div>
+    <hr />
+    <div>
+        {% include "blocks/usersList.html" with items=users %}
+    </div>
+    {% else %}
+    <div class="ink-grey base-regular size-m center" style="min-height: 30rem;">
+        Pas encore de réactions
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

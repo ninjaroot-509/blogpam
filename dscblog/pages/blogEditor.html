@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}
+Edit: {{blog.title}} | DSC IEM Blogs
+{% endblock %}
+{% block root %}
+<link rel="stylesheet" type="text/css" href="/static/styles/header.css" />
+<link rel="stylesheet" type="text/css" href="/static/styles/blogEditor.css" />
+<link rel="stylesheet" type="text/css" href="/static/styles/md.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<div>
+    <div id="be_header">
+        <div class="size-s base-regular ink-black trunc-long">{{blog.title}}</div>
+        <div id="hd_opts" class="hstack space-around">
+            <a id="doneBtn" class="button rounded ink-blue" >Done</a>
+        </div>
+    </div>
+    <div id="be_hd_space"></div>
+    <textarea name="content" id="editor" class="markdown">{{blog.content|safe}}</textarea>
+</div>
+<br />
+<script>
+    document.documentElement.setAttribute("data-theme", "light");
+    var editor = new SimpleMDE({
+        element: document.getElementById('editor')
+    });
+    var api = new window.Api();
+    const blog_id = {{blog.blog_id}}
+    var lastSave=0;
+    var unsavedContent=false;
+    var saving=false;
+    function save(content, willExit=false) {
+        if((new Date().getTime()-lastSave)>2000 || willExit){
+        if(!saving){
+        saving=true
+        api.post('blog/content/set', {
+            blog_id,
+            content
+        }, (code, res) => {
+            saving=false;
+            if (code == 201) {
+                console.log('saved');
+                lastSave=new Date().getTime()
+                unsavedContent=false;
+                if(willExit){
+                    window.location.href = "{{blog.blog_url}}"
+                }
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login"
+            }
+        })
+    }
+    }
+    else{
+        console.log('too soon to save');
+        unsavedContent=true;
+    }
+    }
+    window.setInterval(function(){
+        if(unsavedContent){
+            saving=false;
+            save(editor.value().trim())
+        }
+    },5000)
+    editor.codemirror.on("change", function () {
+        var content = editor.value().trim();
+        save(content)
+    });
+    document.getElementById("doneBtn").addEventListener("click", function()
+        { save(editor.value().trim(),true);
+    });
+
+    window.addEventListener("beforeunload", function (e) {
+    if(saving||unsavedContent){
+    var confirmationMessage = 'Vous avez des changements non gravés. '
+                            + 'Veuillez utiliser le bouton Terminé pour enregistrer et quitter.';
+
+    (e || window.event).returnValue = confirmationMessage; //Gecko + IE
+    return confirmationMessage; //Gecko + Webkit, Safari, Chrome etc.
+    }
+    else{
+        return null;
+    }
+});
+</script>
+{% endblock %}

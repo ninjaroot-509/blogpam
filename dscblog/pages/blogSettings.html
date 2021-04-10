@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+{% block title %}Paramètres du blog - {{blog.title}} | DSC IEM Blogs{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="/static/styles/blogSettings.css" />
+<div class="container">
+    <br />
+    <div class="ink-primary size-xxl base-light">
+        Paramètres du blog
+    </div>
+    <hr />
+    <a href="/blog/{{blog.blog_id}}/edit" id="editSec" class="center size-s base-regular clickable container">
+        Modifier le blog
+    </a>
+    <div class="sec">
+        <div class="vstack align-left">
+            <div class="sec_title size-s ink-grey base-regular">Blog title</div>
+            <input id="titleBox" autocomplete="off" type="text" placeholder="Title" value="{{blog.title}}">
+        </div>
+        <div id="titleSave" class="button rounded saveButton">Save</div>
+    </div>
+    <div class="sec">
+        <div class="vstack align-left">
+            <div class="sec_title size-s ink-grey base-regular">Image URL</div>
+            <input id="imgBox" autocomplete="off" type="text" placeholder="URL" value="{{blog.img_url}}">
+        </div>
+        <div id="imgSave" class="button rounded saveButton">Save</div>
+    </div>
+    <div class="sec vstack align-left" id="topics_sec">
+            <div class="sec_title size-s ink-grey base-regular">Topics</div>
+            <div class="center" id="topics">
+                <div id="topic_add" onclick="addTopic()" class="center base-regular ink-white clickable">Add</div>
+            </div>
+    </div>
+    <div class="hstack space-between opt">
+        <div class="ink-grey size-s base-regular">Public</div>
+        <div id="publishToggle"></div>
+    </div>
+    <br/>
+    <div class="hstack space-between opt">
+        <div class="ink-grey size-s base-regular">Alerts</div>
+        <div id="subscribeToggle"></div>
+    </div>
+    <br />
+    <hr/>
+    <div class="center">
+        <div id="delete" class="ink-red clickable">Supprimer le blog</div>
+    </div>
+    <br/>
+</div>
+<div id="modal" class="center">
+    <div id="screen"></div>
+    <div id="modal_window" class="center-col">
+        <div class="center size-s ink-secondary base-regular" id="tm_title">Ajouter une rubrique</div>
+        <div class="center" style="padding:0.5rem">
+            <input id="topicBox" autocomplete="off" type="text" placeholder="Topic" value="">
+        </div>
+        <div id="topicSave" class="clickable">
+            <div class="ink-blue base-semilight size-s">Save</div>
+        </div>
+    </div>
+</div>
+<script>
+    var publishToggle=toggleSwitch("publishToggle",(isActive)=>{
+        var willActivate=!isActive
+        if(willActivate!=is_published){
+            if(willActivate){
+                publish()
+            }
+            else{
+                unpublish()
+            }
+        }
+    })
+    var subscribeToggle=toggleSwitch("subscribeToggle",(isActive)=>{
+        var willActivate = !isActive
+        if(willActivate!==is_subscribed){
+            if(willActivate){
+                subscribe();
+            }
+            else{
+                unsubscribe();
+            }
+        }
+    })
+    var api = new window.Api();
+    const blog_id = {{blog.blog_id}}
+    var is_published = '{{blog.is_published}}'
+    var title = '{{blog.title}}'
+    var img_url = '{{blog.img_url}}'
+    var is_subscribed = '{{blog.is_subscribed}}'
+    {% autoescape off %}
+    var topics = JSON.parse('{{blog.topics}}')
+    {% endautoescape %}
+    if (is_published == 'True')
+        is_published = true;
+    else
+        is_published = false;
+
+    if(is_subscribed === 'True')
+        is_subscribed = true;
+    else
+        is_subscribed = false;
+
+    function renderPublishButton() {
+        publishToggle(is_published)
+    }
+    renderPublishButton()
+    function renderSubUnsubButton() {
+        subscribeToggle(is_subscribed);
+    }
+    renderSubUnsubButton();
+
+    function publish () {
+        api.post('blog/publish', {
+            blog_id
+        }, (code, res) => {
+            if (code == 201) {
+                is_published = true
+                renderPublishButton()
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login"
+            }
+        })
+    }
+    function unpublish () {
+        api.post('blog/unpublish', {
+            blog_id
+        }, (code, res) => {
+            if (code == 201) {
+                is_published = false
+                renderPublishButton()
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login"
+            }
+        })
+    }
+
+    function subscribe () {
+        api.post('blog/subscribe', {
+            blog_id
+        }, (code, res) => {
+            if (code == 201) {
+                is_subscribed = true;
+                renderSubUnsubButton()
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login";
+            }
+        })
+    };
+
+    function unsubscribe () {
+        api.post('blog/unsubscribe', {
+            blog_id
+        }, (code, res) => {
+            if (code == 201) {
+                is_subscribed = false;
+                renderSubUnsubButton();
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login";
+            }
+        })
+    };
+
+    $("#titleSave").on('click', () => {
+        api.post('blog/title/set', {
+            blog_id,
+            title: $("#titleBox").val().trim()
+        }, (code, res) => {
+            if (code == 201) {
+                title = res.title
+                $("#titleSave").css({
+                    display: 'none'
+                })
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login"
+            }
+        })
+    })
+    $("#imgSave").on('click', () => {
+        api.post('blog/image/set', {
+            blog_id,
+            img_url: $("#imgBox").val().trim()
+        }, (code, res) => {
+            if (code == 201) {
+                img_url = res.img_url
+                $("#imgSave").css({
+                    display: 'none'
+                })
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login"
+            }
+        })
+    })
+    $("#delete").on('click', () => {
+        api.post('blog/delete', {
+            blog_id
+        }, (code, res) => {
+            if (code == 201) {
+                window.location.href = "/profile"
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login"
+            }
+        })
+    })
+    $("#titleBox").on('input', () => {
+        var val = $("#titleBox").val().trim()
+        if (val.length > 3 && title != val) {
+            $("#titleSave").css({
+                display: 'block'
+            })
+        } else {
+            $("#titleSave").css({
+                display: 'none'
+            })
+        }
+    })
+    $("#imgBox").on('input', () => {
+        var val = $("#imgBox").val().trim()
+        if (val.length > 3 && img_url != val) {
+            $("#imgSave").css({
+                display: 'block'
+            })
+        } else {
+            $("#imgSave").css({
+                display: 'none'
+            })
+        }
+    })
+    function renderTopics(){
+        var btn=$("#topic_add")
+        $("#topics").html('');
+        topics.forEach(topic => {
+            $("#topics").append(`<div class="topic ink-primary center"><div class="topic_txt">${topic}</div><div class="topic_remove clickable center" onclick="removeTopic('${topic}')" ></div></div>`)
+        });
+        $("#topics").append(btn)
+    }
+    renderTopics()
+    function removeTopic(topic){
+        console.log('removing topic',topic)
+        api.post('blog/untag', {
+            blog_id,topic
+        }, (code, res) => {
+            if (code == 201) {
+                topics.find((val,ind)=>{
+                    if(val==topic){
+                        topics.splice(ind,1)
+                        return true;
+                    }
+                    return false;
+                })
+                renderTopics()
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login"
+            }
+        })
+    }
+    function topicModal(show){
+        if(show){
+            $("#modal").css({
+                display: 'flex'
+            })
+        }
+        else{
+            $("#modal").css({
+                display: 'none'
+            })
+        }
+    }
+    $("#screen").on('click', () => {
+        topicModal(false)
+    })
+    function addTopic() {
+        topicModal(true)
+    }
+    $("#topicSave").on('click', () => {
+        var val = $("#topicBox").val().trim().toLowerCase();
+        if(val.length>1){
+        api.post('blog/tag', {
+            blog_id,topic:val
+        }, (code, res) => {
+            topicModal(false)
+            $("#topicBox").val('')
+            if (code == 201) {
+                topics.push(res.topic)
+                renderTopics()
+            } else if (code == 400) {
+                alert(res.msg);
+            } else if (code == 401) {
+                window.location.href = "/login"
+            }
+        })
+        }
+        else{
+            $("#topicBox").focus()
+        }
+    })
+    $("#topicBox").on('input', () => {
+        var val = $("#topicBox").val().trim().toLowerCase();
+        if(val!='#'){
+        $("#topicBox").val(val)
+        }
+        else{
+            $("#topicBox").val('')
+        }
+    })
+</script>
+{% endblock %}

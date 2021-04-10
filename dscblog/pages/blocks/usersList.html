@@ -1,0 +1,35 @@
+<link rel="stylesheet" type="text/css" href="/static/styles/userslist.css" />
+{% if items %}
+<div class="users_list">
+    {% for user in items %}
+    <div class="hstack ul_item" >
+            {% if user.reaction %}
+                <div class="ul_react">
+                    {% if user.reaction == 'LIK' %}
+                    👍
+                    {% elif user.reaction == 'LOV' %}
+                    ❤
+                    {% elif user.reaction == 'LIT' %}
+                    🔥
+                    {% elif user.reaction == 'COL' %}
+                    🆒
+                    {% elif user.reaction == 'CLP' %}
+                    👏
+                    {% endif %}
+                </div>
+            {% endif %}
+            {% if user.avatar_url %}
+            <a href="/@{{ user.username }}">
+                <img class="icon ul_avatar" src="{{ user.avatar_url }}" />
+            </a>
+            {% endif %}
+            <div class="vstack ul_txt">
+                {% if user.name %}
+                <a class="size-xs base-regular ink-secondary" href="/@{{ user.username }}">{{ user.name }}</a>
+                {% endif %}
+                <a class="size-xs base-light ink-grey" style="font-size: 0.8rem;" href="/@{{ user.username }}">@{{ user.username }}</a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
